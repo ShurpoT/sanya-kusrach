@@ -32,37 +32,86 @@ exports.register = async (req, res) => {
     }
 };
 
+// exports.login = async (req, res) => {
+//     const { email, password } = req.body;
+
+//     const [users] = await db.query("SELECT * FROM users WHERE email = ?", [email]);
+
+//     const user = users[0];
+
+//     if (!user) {
+//         return res.status(401).json({ message: "Invalid credentials" });
+//     }
+
+//     // (пароль ты уже проверяешь у себя)
+
+//     const token = jwt.sign(
+//         {
+//             id: user.id,
+//             role: user.role, // 👈 ВАЖНО
+//         },
+//         process.env.JWT_SECRET,
+//         { expiresIn: "1d" },
+//     );
+
+//     res.json({
+//         token,
+//         user: {
+//             id: user.id,
+//             name: user.name,
+//             email: user.email,
+//             role: user.role,
+//         },
+//     });
+// };
+
 exports.login = async (req, res) => {
-    const { email, password } = req.body;
+    try {
+        const { email, password } = req.body;
 
-    const [users] = await db.query("SELECT * FROM users WHERE email = ?", [email]);
+        // 1. Ищем пользователя в базе данных
+        const [users] = await db.query("SELECT * FROM users WHERE email = ?", [email]);
+        const user = users[0];
 
-    const user = users[0];
+        // Если пользователь не найден
+        if (!user) {
+            return res.status(401).json({ message: "Invalid credentials" });
+        }
 
-    if (!user) {
-        return res.status(401).json({ message: "Invalid credentials" });
+        // 2. Проверяем корректность пароля
+        // user.password — это хэш из вашей базы данных
+        const isPasswordValid = await bcrypt.compare(password, user.password_hash);
+
+        // Если пароль не совпадает
+        if (!isPasswordValid) {
+            return res.status(401).json({ message: "Invalid credentials" });
+        }
+
+        // 3. Создаем JWT токен, если проверка прошла успешно
+        const token = jwt.sign(
+            {
+                id: user.id,
+                role: user.role,
+            },
+            process.env.JWT_SECRET,
+            { expiresIn: "1d" },
+        );
+
+        // 4. Возвращаем ответ клиенту
+        return res.json({
+            token,
+            user: {
+                id: user.id,
+                name: user.name,
+                email: user.email,
+                role: user.role,
+            },
+        });
+    } catch (error) {
+        // Хэндлинг непредвиденных ошибок сервера
+        console.error(error);
+        return res.status(500).json({ message: "Internal server error" });
     }
-
-    // (пароль ты уже проверяешь у себя)
-
-    const token = jwt.sign(
-        {
-            id: user.id,
-            role: user.role, // 👈 ВАЖНО
-        },
-        process.env.JWT_SECRET,
-        { expiresIn: "1d" },
-    );
-
-    res.json({
-        token,
-        user: {
-            id: user.id,
-            name: user.name,
-            email: user.email,
-            role: user.role,
-        },
-    });
 };
 
 exports.me = async (req, res) => {

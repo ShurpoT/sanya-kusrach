@@ -5,6 +5,7 @@ import Register from "../pages/Register";
 import Dashboard from "../pages/Dashboard";
 import Projects from "../pages/Projects";
 import ProjectBoard from "../pages/ProjectBoard";
+import NotFoundPage from "../pages/NotFoundPage.jsx";
 
 import ProtectedRoute from "../components/ProtectedRoute";
 
@@ -45,6 +46,7 @@ export default function AppRouter() {
                     </ProtectedRoute>
                 }
             />
+            <Route path="*" element={<NotFoundPage />} />
         </Routes>
     );
 }

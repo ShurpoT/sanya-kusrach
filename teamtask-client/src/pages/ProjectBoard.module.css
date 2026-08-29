@@ -1,0 +1,38 @@
+.formContainer {
+    /* Сюда можно добавить стили для контейнера формы, если понадобятся */
+}
+
+.form {
+    /* Сюда можно добавить стили для самой формы */
+}
+
+.inputField {
+    margin-right: 10px;
+}
+
+.board {
+    display: flex;
+    gap: 20px;
+}
+
+.membersSection {
+    margin-bottom: 20px;
+}
+
+.column {
+    flex: 1;
+    border: 1px solid #ccc;
+    padding: 10px;
+}
+
+.taskCard {
+    border: 1px solid #aaa;
+    margin-bottom: 10px;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.buttonGroup {
+    display: flex;
+    gap: 5px;
+}

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import api from "../api/axios";
 import { useNavigate } from "react-router-dom";
+import styles from "./Dashboard.module.css";
 
 export default function Dashboard() {
     const [projects, setProjects] = useState([]);
@@ -33,11 +34,11 @@ export default function Dashboard() {
     const done = tasks.filter((t) => t.status === "done");
 
     return (
-        <div style={{ padding: 20 }}>
+        <div className={styles.container}>
             <h2>Dashboard</h2>
 
             {/* STATS */}
-            <div style={{ display: "flex", gap: 15, marginBottom: 20 }}>
+            <div className={styles.statsGrid}>
                 <Card title="Projects" value={projects.length} />
                 <Card title="Todo" value={todo.length} />
                 <Card title="In Progress" value={inProgress.length} />
@@ -49,36 +50,25 @@ export default function Dashboard() {
 
             {projects.length === 0 && <p>No projects yet</p>}
 
-            {projects.map((p) => (
-                <div
-                    key={p.id}
-                    onClick={() => navigate(`/projects/${p.id}`)}
-                    style={{
-                        border: "1px solid #ddd",
-                        padding: 10,
-                        marginBottom: 10,
-                        borderRadius: 6,
-                        cursor: "pointer",
-                        transition: "0.2s",
-                    }}>
-                    <h4>{p.name}</h4>
-                    <p>{p.description}</p>
+            {projects.length === 0 ? (
+                <p>No projects yet</p>
+            ) : (
+                <div className={styles.projectList}>
+                    {projects.map((p) => (
+                        <div key={p.id} onClick={() => navigate(`/projects/${p.id}`)} className={styles.projectCard}>
+                            <h4>{p.name}</h4>
+                            <p>{p.description}</p>
+                        </div>
+                    ))}
                 </div>
-            ))}
+            )}
         </div>
     );
 }
 // карточка
 function Card({ title, value }) {
     return (
-        <div
-            style={{
-                border: "1px solid #ddd",
-                padding: 15,
-                minWidth: 120,
-                textAlign: "center",
-                borderRadius: 8,
-            }}>
+        <div className={styles.card}>
             <h4>{title}</h4>
             <h2>{value}</h2>
         </div>

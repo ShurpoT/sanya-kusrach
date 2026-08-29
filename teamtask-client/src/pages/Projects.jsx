@@ -1,12 +1,15 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import api from "../api/axios";
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext";
 
 export default function Projects() {
     const [projects, setProjects] = useState([]);
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
     const navigate = useNavigate();
+
+    const { user } = useContext(AuthContext);
 
     const fetchProjects = async () => {
         const res = await api.get("/projects");
@@ -38,25 +41,27 @@ export default function Projects() {
             <h2>Projects</h2>
 
             {/* CREATE PROJECT */}
-            <div className="form-container">
-                <div className="form">
-                    <input
-                        placeholder="name"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        style={{ marginRight: 10 }}
-                    />
+            {(user.role === "admin" || user.role === "manager") && (
+                <div className="form-container">
+                    <div className="form">
+                        <input
+                            placeholder="name"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            style={{ marginRight: 10 }}
+                        />
 
-                    <input
-                        placeholder="description"
-                        value={description}
-                        onChange={(e) => setDescription(e.target.value)}
-                        style={{ marginRight: 10 }}
-                    />
+                        <input
+                            placeholder="description"
+                            value={description}
+                            onChange={(e) => setDescription(e.target.value)}
+                            style={{ marginRight: 10 }}
+                        />
 
-                    <button onClick={createProject}>Create</button>
+                        <button onClick={createProject}>Create</button>
+                    </div>
                 </div>
-            </div>
+            )}
 
             {/* PROJECT LIST */}
             {projects
